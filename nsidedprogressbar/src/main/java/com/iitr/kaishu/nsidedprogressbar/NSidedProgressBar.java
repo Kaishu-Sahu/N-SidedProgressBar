@@ -6,6 +6,7 @@ import android.graphics.ColorFilter;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -29,7 +30,8 @@ public class NSidedProgressBar extends View {
     private Paint temp;
     private float degree;
     private Path path;
-
+    private PathMeasure pm;
+    float tempee = 0;
     public NSidedProgressBar(Context context) {
         super(context);
         initProgressBar();
@@ -52,17 +54,18 @@ public class NSidedProgressBar extends View {
         paint.setColor(android.graphics.Color.BLACK);
         paint.setStrokeWidth(5);
         paint.setStyle(Paint.Style.STROKE);
-        CornerPathEffect corEffect = new CornerPathEffect(50F);
+        CornerPathEffect corEffect = new CornerPathEffect(20);
         paint.setPathEffect(corEffect);
         path = new Path();
-        sideCount = 4;
+        sideCount = 3;
         xCoordinates = new float[sideCount];
         yCoordinates = new float[sideCount];
         progress = 20;
         temp = new Paint();
+        temp.setPathEffect(corEffect);
         temp.setStrokeWidth(10);
         temp.setColor(android.graphics.Color.RED);
-        paint.setStyle(Paint.Style.STROKE);
+        temp.setStyle(Paint.Style.STROKE);
         degree = 5;
 
         Timer timer = new Timer();
@@ -82,25 +85,45 @@ public class NSidedProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+       // canvas.rotate(tempee/20, canvas.getWidth()/2 , canvas.getHeight()/2);
+
         xCenter = canvas.getWidth() / 2;
         yCenter = canvas.getHeight() / 2;
         setCoordinates();
         sideLength = (float) Math.hypot(xCoordinates[0] - xCoordinates[1], yCoordinates[0] - yCoordinates[1]);
-
         path.moveTo(xCoordinates[0], yCoordinates[0]);
-        for (int i = 0; i < sideCount; i++) {
-            if ((i + 1) < sideCount) {
+        for (int i = 1; i < sideCount; i++) {
+           // if ((i + 1) < sideCount) {
+              //  path.lineTo(xCoordinates[i], yCoordinates[i]);
+                //canvas.drawLine(, xCoordinates[i + 1], yCoordinates[i + 1], paint);
+           // } else {
+//                path.lineTo(xCoordinates[0], yCoordinates[0]);
 
-                path.lineTo(xCoordinates[i], yCoordinates[i]);
-                canvas.drawLine(, xCoordinates[i + 1], yCoordinates[i + 1], paint);
-            } else {
-                canvas.drawLine(xCoordinates[i], yCoordinates[i], xCoordinates[0], yCoordinates[0], paint);
-            }
+                //                canvas.drawLine(xCoordinates[i], yCoordinates[i], xCoordinates[0], yCoordinates[0], paint);
+            //}
         }
-        drawLine(canvas);
-        canvas.rotate(degree, canvas.getWidth()/2 , canvas.getHeight()/2);
-        degree += 5;
+     //   path.lineTo(xCoordinates[0], yCoordinates[0]);
+        path.cubicTo(xCoordinates[0],yCoordinates[0],xCoordinates[1],yCoordinates[1],xCoordinates[2],yCoordinates[2]);
+        path.close();
+        canvas.drawPath(path, paint);
+
+        pm = new PathMeasure(path, false);
+        Path a = new Path();
+        pm.getSegment(tempee, tempee+tempee/2, a , true);
+        canvas.drawPath(a , temp);
         invalidate();
+        if (tempee >= pm.getLength()) {
+            tempee = 0;
+        }
+        tempee+=5;
+
+        if (tempee >= pm.getLength()) {
+            tempee = 0;
+        }
+       // pm.getPosTan(pm.getLength()/2, )
+        //drawLine(canvas);
+        //degree += 5;
+        //invalidate();
         //   canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, 50, paint);
     }
 
