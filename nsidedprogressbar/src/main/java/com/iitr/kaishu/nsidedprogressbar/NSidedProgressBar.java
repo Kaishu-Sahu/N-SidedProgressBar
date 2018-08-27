@@ -59,7 +59,7 @@ public class NSidedProgressBar extends View {
        // CornerPathEffect corEffect = new CornerPathEffect(20);
         //paint.setPathEffect(corEffect);
         path = new Path();
-        sideCount = 3;
+        sideCount = 8;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
         x1VertiCoord = new float[sideCount];
@@ -109,7 +109,7 @@ public class NSidedProgressBar extends View {
 
                 //                canvas.drawLine(xVertiCoord[i], yVertiCoord[i], xVertiCoord[0], yVertiCoord[0], paint);
             //}
-         path.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x1VertiCoord[i], y2VertiCoord[i]);
+         path.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x2VertiCoord[i], y2VertiCoord[i]);
             path.lineTo(x1VertiCoord[(i+1)%sideCount], y1VertiCoord[(i+1)%sideCount]);
         }
         //path.lineTo(xVertiCoord[0], yVertiCoord[0]);
@@ -119,9 +119,9 @@ public class NSidedProgressBar extends View {
 
         pm = new PathMeasure(path, false);
         Path a = new Path();
-       // pm.getSegment(tempee, tempee+tempee/2, a , true);
-        //canvas.drawPath(a , temp);
-        //invalidate();
+        pm.getSegment(tempee, tempee+tempee/2, a , true);
+        canvas.drawPath(a , temp);
+        invalidate();
         if (tempee >= pm.getLength()) {
             tempee = 0;
         }
@@ -147,14 +147,15 @@ public class NSidedProgressBar extends View {
         }
 
         for (int i = 0; i < sideCount; i++) {
-            x1VertiCoord[i] = (1 * xVertiCoord[(i+1)%sideCount] + 9 * xVertiCoord[i])/10;
-            y1VertiCoord[i] = (1 * yVertiCoord[(i+1)%sideCount] + 9 * yVertiCoord[i])/10;
+            x1VertiCoord[i] = (float)(1 * xVertiCoord[(sideCount+i -1)%sideCount] + 9 * xVertiCoord[i])/10;
+            y1VertiCoord[i] = (float)(1 * yVertiCoord[(sideCount + i -1)%sideCount] + 9 * yVertiCoord[i])/10;
 
             Log.d("TEST", "("+x1VertiCoord[i]+","+y1VertiCoord[i]+")");
 
 
-            x2VertiCoord[i] = (1 * xVertiCoord[(sideCount+i -1)%sideCount] + 9 * xVertiCoord[i])/10;
-            y2VertiCoord[i] = (1 * yVertiCoord[(sideCount + i -1)%sideCount] + 9 * yVertiCoord[i])/10;
+            x2VertiCoord[i] = (float)(1 * xVertiCoord[(i+1)%sideCount] + 9 * xVertiCoord[i])/10;
+            y2VertiCoord[i] = (float)(1 * yVertiCoord[(i+1)%sideCount] + 9 * yVertiCoord[i])/10;
+
 
             Log.d("TEST", "("+x2VertiCoord[i]+","+y2VertiCoord[i]+")");
 
