@@ -37,13 +37,18 @@ public class NSidedProgressBar extends View {
     private PathMeasure pm;
     float withoutAcceleration = 0;
     float withAcceleration = 0;
-    private float startPoint = 0;
+    private float startPoint = 200;
     private float endPoint = 0;
     private Context context;
-    private float velocity = 10;
+    private float velocity = 5;
     private float akinTime = 1;
     private float minDistance = 100;
     boolean first = true;
+    boolean wildCard1 = false;
+    boolean wildCard2 = false;
+    boolean goInside = false;
+    boolean isAllowed = true;
+    int whereToGo = 0;
 
     public NSidedProgressBar(Context context) {
         super(context);
@@ -72,10 +77,10 @@ public class NSidedProgressBar extends View {
         paint.setColor(android.graphics.Color.BLACK);
         paint.setStrokeWidth(5);
         paint.setStyle(Paint.Style.STROKE);
-       // CornerPathEffect corEffect = new CornerPathEffect(20);
+        // CornerPathEffect corEffect = new CornerPathEffect(20);
         //paint.setPathEffect(corEffect);
         path = new Path();
-        sideCount = 8;
+        sideCount = 3;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
         x1VertiCoord = new float[sideCount];
@@ -84,48 +89,35 @@ public class NSidedProgressBar extends View {
         y2VertiCoord = new float[sideCount];
         progress = 20;
         temp = new Paint();
-       // temp.setPathEffect(corEffect);
+        // temp.setPathEffect(corEffect);
         temp.setStrokeWidth(10);
         temp.setColor(android.graphics.Color.RED);
         temp.setStyle(Paint.Style.STROKE);
         degree = 5;
-
-        Timer timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                ((Activity)context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        NSidedProgressBar.this.invalidate();
-                    }
-                });
-            }
-        }, 0, 500);
 
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-       // canvas.rotate(tempee/20, canvas.getWidth()/2 , canvas.getHeight()/2);
+        // canvas.rotate(tempee/20, canvas.getWidth()/2 , canvas.getHeight()/2);
         xCenter = canvas.getWidth() / 2;
         yCenter = canvas.getHeight() / 2;
         setCoordinates();
-         path.moveTo(x1VertiCoord[0], y1VertiCoord[0]);
+        path.moveTo(x1VertiCoord[0], y1VertiCoord[0]);
         //  path.moveTo(xVertiCoord[0], yVertiCoord[0]);
 
         for (int i = 0; i < sideCount; i++) {
-           // if ((i + 1) < sideCount) {
-                //path.lineTo(xVertiCoord[i+1], yVertiCoord[i+1]);
-                //canvas.drawLine(, xVertiCoord[i + 1], yVertiCoord[i + 1], paint);
-           // } else {
-              //  path.lineTo(xVertiCoord[0], yVertiCoord[0]);
+            // if ((i + 1) < sideCount) {
+            //path.lineTo(xVertiCoord[i+1], yVertiCoord[i+1]);
+            //canvas.drawLine(, xVertiCoord[i + 1], yVertiCoord[i + 1], paint);
+            // } else {
+            //  path.lineTo(xVertiCoord[0], yVertiCoord[0]);
 
-                //                canvas.drawLine(xVertiCoord[i], yVertiCoord[i], xVertiCoord[0], yVertiCoord[0], paint);
+            //                canvas.drawLine(xVertiCoord[i], yVertiCoord[i], xVertiCoord[0], yVertiCoord[0], paint);
             //}
-         path.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x2VertiCoord[i], y2VertiCoord[i]);
-            path.lineTo(x1VertiCoord[(i+1)%sideCount], y1VertiCoord[(i+1)%sideCount]);
+            path.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x2VertiCoord[i], y2VertiCoord[i]);
+            path.lineTo(x1VertiCoord[(i + 1) % sideCount], y1VertiCoord[(i + 1) % sideCount]);
         }
         //path.lineTo(xVertiCoord[0], yVertiCoord[0]);
         //path.cubicTo(xVertiCoord[0], yVertiCoord[0], xVertiCoord[1], yVertiCoord[1], xVertiCoord[2], yVertiCoord[2]);
@@ -133,36 +125,104 @@ public class NSidedProgressBar extends View {
         canvas.drawPath(path, paint);
 
         pm = new PathMeasure(path, false);
-        sideLength = pm.getLength()/sideCount;
+        sideLength = pm.getLength() / sideCount;
         Path a = new Path();
 
-        if (first) {
+        /*if (first) {
             endPoint = (sideCount-1)*sideLength;
-            Log.d("TEST",startPoint+"  "+endPoint);
         }
-        first = false;
-        pm.getSegment(startPoint, endPoint, a , true);
+        first = false;*/
 
-        withoutAcceleration += velocity;
-        withAcceleration += velocity*akinTime;
-        akinTime += 1;
+        withoutAcceleration = velocity;
+        withAcceleration = velocity * akinTime;
 
-        if (endPoint - startPoint > minDistance) {
+        /*if (endPoint - startPoint > minDistance) {
             startPoint += withAcceleration;
             endPoint += withoutAcceleration;
+            pm.getSegment(startPoint, endPoint, a , true);
+
+        } else if (endPoint >= pm.getLength()) {
+            akinTime = 0;
+            float[] temp = new float[2];
+            pm.getPosTan(startPoint, temp , null);
+            path.moveTo(temp[0],temp[1]);
+            endPoint = 0;
+            startPoint = minDistance + 1;
+            pm.getSegment(endPoint, startPoint, a , true);
 
         } else if (endPoint - startPoint <= minDistance) {
             akinTime = 1;
-            startPoint = withoutAcceleration;
-            endPoint  = withoutAcceleration;
+            startPoint += withoutAcceleration;
+            endPoint  += withoutAcceleration;
         } else {
-            endPoint = startPoint;
-            startPoint = endPoint;
+
+        }*/
+/*
+        if ((endPoint % pm.getLength()) - (startPoint % pm.getLength()) > minDistance && isAllowed) {
+            Log.d("TEST","0");
+            if (startPoint >= pm.getLength() || goInside) {
+                goInside = true;
+                pm.getSegment(0, startPoint % pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+                pm.getSegment(endPoint, pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+            } else {
+                pm.getSegment(endPoint, startPoint, a, true);
+            }
+        } else if ((startPoint % pm.getLength()) - (endPoint % pm.getLength()) > minDistance && isAllowed) {
+            Log.d("TEST","1");
+
+
+            if (startPoint <= pm.getLength() / 2) {
+                akinTime += 0.2;
+            } else if (startPoint > pm.getLength() / 2) {
+                akinTime -= 0.01;
+            }
+            endPoint += withoutAcceleration;
+            startPoint += withAcceleration;
+            if (startPoint >= pm.getLength() || goInside) {
+                goInside = true;
+                pm.getSegment(0, startPoint % pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+                pm.getSegment(endPoint, pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+            } else {
+                pm.getSegment(endPoint, startPoint, a, true);
+            }
+        } else {
+            Log.d("TEST","2");
+
+            startPoint += withoutAcceleration;
+            endPoint += withAcceleration;
+            if (startPoint >= pm.getLength() || goInside) {
+                goInside = true;
+                pm.getSegment(0, startPoint % pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+                pm.getSegment(endPoint, pm.getLength(), a, true);
+                canvas.drawPath(a, temp);
+            } else {
+                pm.getSegment(endPoint, startPoint, a, true);
+            }
+        }*/
+
+        if (whereToGo == 0) {
+            firstPath(canvas);
+        } else if (whereToGo == 1) {
+            thirdPath(canvas);
+        } else if (whereToGo == 2) {
+            secondPath(canvas);
         }
-        startPoint = startPoint % pm.getLength();
-        endPoint = endPoint % pm.getLength();
-        canvas.drawPath(a , temp);
-       // pm.getPosTan(pm.getLength()/2, )
+
+
+//        endPoint = endPoint % pm.getLength();
+//        startPoint = startPoint % pm.getLength();
+      /*  if (startPoint / pm.getLength() > 0) {
+            startPoint = startPoint % pm.getLength();
+            pm.getSegment(0, startPoint, a , true);
+            canvas.drawPath(a, temp);
+        } */
+
+        // pm.getPosTan(pm.getLength()/2, )
         //drawLine(canvas);
         //degree += 5;
         invalidate();
@@ -172,24 +232,24 @@ public class NSidedProgressBar extends View {
     private void setCoordinates() {
         float diffAngle = (float) (2 * Math.PI / sideCount);
         for (int i = 0; i < sideCount; i++) {
-            xVertiCoord[i] = xCenter - (float) ((xCenter) * Math.sin((double) (i+1) * diffAngle));
-            yVertiCoord[i] = yCenter - (float) ((xCenter) * Math.cos((double) (i+1) * diffAngle));
+            xVertiCoord[i] = xCenter - (float) ((xCenter) * Math.sin((double) (i + 1) * diffAngle));
+            yVertiCoord[i] = yCenter - (float) ((xCenter) * Math.cos((double) (i + 1) * diffAngle));
 
-           // Log.d("TEST", "("+xVertiCoord[i]+","+yVertiCoord[i]+")");
+            // Log.d("TEST", "("+xVertiCoord[i]+","+yVertiCoord[i]+")");
         }
 
         for (int i = 0; i < sideCount; i++) {
-            x1VertiCoord[i] = (float)(1 * xVertiCoord[(sideCount+i -1)%sideCount] + 9 * xVertiCoord[i])/10;
-            y1VertiCoord[i] = (float)(1 * yVertiCoord[(sideCount + i -1)%sideCount] + 9 * yVertiCoord[i])/10;
+            x1VertiCoord[i] = (float) (1 * xVertiCoord[(sideCount + i - 1) % sideCount] + 9 * xVertiCoord[i]) / 10;
+            y1VertiCoord[i] = (float) (1 * yVertiCoord[(sideCount + i - 1) % sideCount] + 9 * yVertiCoord[i]) / 10;
 
-          //  Log.d("TEST", "("+x1VertiCoord[i]+","+y1VertiCoord[i]+")");
-
-
-            x2VertiCoord[i] = (float)(1 * xVertiCoord[(i+1)%sideCount] + 9 * xVertiCoord[i])/10;
-            y2VertiCoord[i] = (float)(1 * yVertiCoord[(i+1)%sideCount] + 9 * yVertiCoord[i])/10;
+            //  Log.d("TEST", "("+x1VertiCoord[i]+","+y1VertiCoord[i]+")");
 
 
-          //  Log.d("TEST", "("+x2VertiCoord[i]+","+y2VertiCoord[i]+")");
+            x2VertiCoord[i] = (float) (1 * xVertiCoord[(i + 1) % sideCount] + 9 * xVertiCoord[i]) / 10;
+            y2VertiCoord[i] = (float) (1 * yVertiCoord[(i + 1) % sideCount] + 9 * yVertiCoord[i]) / 10;
+
+
+            //  Log.d("TEST", "("+x2VertiCoord[i]+","+y2VertiCoord[i]+")");
 
         }
     }
@@ -202,6 +262,67 @@ public class NSidedProgressBar extends View {
         float xFinalPoint = xVertiCoord[currentSide] + partOnSide * (float) Math.cos(Math.atan(slope));
         float yFinalPoint = yVertiCoord[currentSide] + partOnSide * (float) Math.sin(Math.atan(slope));
         canvas.drawLine(xVertiCoord[currentSide], yVertiCoord[currentSide], xFinalPoint, yFinalPoint, temp);
+    }
+
+    private void firstPath(Canvas canvas) {
+        Path a = new Path();
+        startPoint += withAcceleration;
+        endPoint += withoutAcceleration;
+        akinTime += 0.1;
+        float ga =  Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
+        if (ga <= minDistance){
+            whereToGo = 1;
+        }
+        if (endPoint >= pm.getLength()) {
+            wildCard1 = false;
+        }
+        if (startPoint >= pm.getLength() || wildCard1) {
+            wildCard1 = true;
+            pm.getSegment(0, startPoint % pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+            pm.getSegment(endPoint, pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+            return;
+        }
+
+
+        pm.getSegment(endPoint, startPoint, a, true);
+
+        canvas.drawPath(a, temp);
+    }
+
+    private void secondPath(Canvas canvas) {
+        Path a = new Path();
+        if (endPoint >= pm.getLength() || wildCard2) {
+            wildCard2 = true;
+            pm.getSegment(0, startPoint % pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+            pm.getSegment(endPoint, pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+        } else {
+            pm.getSegment(endPoint, startPoint, a, true);
+        }
+        canvas.drawPath(a, temp);
+    }
+
+    private void thirdPath(Canvas canvas) {
+        Path a = new Path();
+        startPoint += withoutAcceleration;
+        endPoint += withoutAcceleration;
+
+
+        if (startPoint >= pm.getLength() || wildCard1) {
+            wildCard1 = true;
+            pm.getSegment(0, startPoint % pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+            pm.getSegment(endPoint, pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+        }
+        if (endPoint >= sideLength*2) {
+            whereToGo = 2;
+        } else {
+            whereToGo = 1;
+        }
     }
 
 
