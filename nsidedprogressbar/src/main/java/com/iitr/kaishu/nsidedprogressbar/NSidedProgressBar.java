@@ -49,6 +49,8 @@ public class NSidedProgressBar extends View {
     boolean goInside = false;
     boolean isAllowed = true;
     int whereToGo = 0;
+    int preWhereToGo = 0;
+    float initTag = 0;
 
     public NSidedProgressBar(Context context) {
         super(context);
@@ -80,7 +82,7 @@ public class NSidedProgressBar extends View {
         // CornerPathEffect corEffect = new CornerPathEffect(20);
         //paint.setPathEffect(corEffect);
         path = new Path();
-        sideCount = 3;
+        sideCount = 8;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
         x1VertiCoord = new float[sideCount];
@@ -211,6 +213,8 @@ public class NSidedProgressBar extends View {
             thirdPath(canvas);
         } else if (whereToGo == 2) {
             secondPath(canvas);
+        } else if (whereToGo == 3) {
+            forthPath(canvas);
         }
 
 
@@ -269,15 +273,18 @@ public class NSidedProgressBar extends View {
         startPoint += withAcceleration;
         endPoint += withoutAcceleration;
         akinTime += 0.1;
-        float ga =  Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
-        if (ga <= minDistance){
+        float ga = Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
+        if (ga <= minDistance) {
             whereToGo = 1;
         }
         if (endPoint >= pm.getLength()) {
             wildCard1 = false;
         }
-        if (startPoint >= pm.getLength() || wildCard1) {
+        if (startPoint >= pm.getLength()) {
+            startPoint = 0;
             wildCard1 = true;
+        }
+        if (wildCard1) {
             pm.getSegment(0, startPoint % pm.getLength(), a, true);
             canvas.drawPath(a, temp);
             pm.getSegment(endPoint, pm.getLength(), a, true);
@@ -289,27 +296,43 @@ public class NSidedProgressBar extends View {
         pm.getSegment(endPoint, startPoint, a, true);
 
         canvas.drawPath(a, temp);
+        preWhereToGo = 0;
+
     }
 
     private void secondPath(Canvas canvas) {
         Path a = new Path();
-        if (endPoint >= pm.getLength() || wildCard2) {
-            wildCard2 = true;
+        startPoint += withoutAcceleration;
+        endPoint += withAcceleration;
+        if (wildCard1) {
             pm.getSegment(0, startPoint % pm.getLength(), a, true);
             canvas.drawPath(a, temp);
             pm.getSegment(endPoint, pm.getLength(), a, true);
             canvas.drawPath(a, temp);
-        } else {
-            pm.getSegment(endPoint, startPoint, a, true);
         }
+        if (endPoint >= pm.getLength()) {
+            wildCard1 = false;
+            endPoint = 0;
+        }
+        pm.getSegment(endPoint, startPoint % pm.getLength(), a, true);
         canvas.drawPath(a, temp);
+        float ga = Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
+        if (ga <= minDistance) {
+            whereToGo = 3;
+        }
+        preWhereToGo = 2;
+
     }
 
     private void thirdPath(Canvas canvas) {
         Path a = new Path();
+
         startPoint += withoutAcceleration;
         endPoint += withoutAcceleration;
 
+        if (preWhereToGo != whereToGo) {
+            initTag = endPoint;
+        }
 
         if (startPoint >= pm.getLength() || wildCard1) {
             wildCard1 = true;
@@ -317,12 +340,49 @@ public class NSidedProgressBar extends View {
             canvas.drawPath(a, temp);
             pm.getSegment(endPoint, pm.getLength(), a, true);
             canvas.drawPath(a, temp);
-        }
-        if (endPoint >= sideLength*2) {
-            whereToGo = 2;
         } else {
-            whereToGo = 1;
+            pm.getSegment(endPoint, startPoint, a, true);
+            canvas.drawPath(a, temp);
         }
+
+            if (endPoint - initTag >= sideLength / 2) {
+                whereToGo = 2;
+            } else {
+                whereToGo = 1;
+            }
+
+
+        preWhereToGo = 1;
+    }
+
+    private void forthPath(Canvas canvas) {
+        Path a = new Path();
+        startPoint += withoutAcceleration;
+        endPoint += withoutAcceleration;
+
+        if (preWhereToGo != whereToGo) {
+            initTag = startPoint%pm.getLength();
+        }
+
+        if (startPoint >= pm.getLength() || wildCard1) {
+            wildCard1 = true;
+            pm.getSegment(0, startPoint % pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+            pm.getSegment(endPoint, pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+        } else {
+            pm.getSegment(endPoint%pm.getLength(), startPoint%pm.getLength(), a, true);
+            canvas.drawPath(a, temp);
+        }
+
+            if (startPoint%pm.getLength() - initTag >= sideLength / 2) {
+                whereToGo = 0;
+            } else {
+                whereToGo = 3;
+            }
+
+
+        preWhereToGo = 3;
     }
 
 
