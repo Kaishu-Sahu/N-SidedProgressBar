@@ -44,7 +44,7 @@ public class NSidedProgressBar extends View {
     private float velocity = 5;
     private float akinTime = 0;
     private float minDistance = 100;
-    private float minDistanceSec = 50;
+    private float minDistanceSec = 40;
     private float startPoint = minDistanceSec;
     boolean first = true;
     boolean wildCard1 = false;
@@ -57,8 +57,10 @@ public class NSidedProgressBar extends View {
     Path secPath;
     float times = 0;
     int genCount = 0;
-    int fps = 60;
+    int fps = 30;
     float totalDisStartPoint;
+    float tempStartPoint = 0;
+    int timetimes = 0;
     long time = System.currentTimeMillis();
 
     public NSidedProgressBar(Context context) {
@@ -189,11 +191,11 @@ public class NSidedProgressBar extends View {
         if (whereToGo == 0) {
             firstPath(canvas);
         } else if (whereToGo == 1) {
-            // thirdPath(canvas);
+             thirdPath(canvas);
         } else if (whereToGo == 2) {
-            //  secondPath(canvas);
+              secondPath(canvas);
         } else if (whereToGo == 3) {
-            // forthPath(canvas);
+             forthPath(canvas);
         }
         canvas.drawPath(secPath, temp);
     }
@@ -226,11 +228,11 @@ public class NSidedProgressBar extends View {
     }
 
     private void firstPath(Canvas canvas) {
-        startPoint += withAcceleration;
-        endPoint += withoutAcceleration;
-        secPath.reset();
 
-        if (preWhereToGo != whereToGo) {
+
+
+
+        /*if (preWhereToGo != whereToGo) {
             if ((endPoint - minDistance - sideLength) >= 0) {
                 initTag = endPoint - minDistance - sideLength;
             } else {
@@ -243,19 +245,55 @@ public class NSidedProgressBar extends View {
                 wildCard2 = false;
                 times =2 * (withAcceleration - velocity) / fps;
             }
-            akinTime -= times;
+            akinTime -= 0.5;
         } else {
             akinTime += 0.5;
 
         }
         Log.d("TEST", akinTime+""
-      );
+      );*/
+        timetimes+=1;
+
+        if (wildCard2) {
+            wildCard2 = false;
+            if (velocity * fps - minDistance >= startPoint) {
+                totalDisStartPoint = pm.getLength() + velocity * fps - minDistance - minDistanceSec;
+            } else {
+                totalDisStartPoint = pm.getLength() - (minDistanceSec - (velocity * fps - minDistance));
+            }
+
+            times = (8 * ((totalDisStartPoint/2) - (velocity * fps/2))) / (fps * fps);
+          //  Log.d("TEST", totalDisStartPoint+" "+pm.getLength()+ " "+ startPoint + " " + times);
+           // Log.d("TEST", totalDisStartPoint+" "+pm.getLength());
+
+        }
+
+        startPoint += withAcceleration;
+        endPoint += withoutAcceleration;
+        secPath.reset();
+        tempStartPoint += withAcceleration;
+
+        if (tempStartPoint <= totalDisStartPoint / 2) {
+            akinTime += times;
+
+        } else {
+
+            try {if (akinTime <= 0) {
+                whereToGo = 1;
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            akinTime -= times;
+        }
+       // Log.d("TEST", akinTime+"");
         float ga = endPoint - startPoint;
 
         if (ga <= minDistance && ga >= 0) {
             whereToGo = 1;
+
+            tempStartPoint = 0;
             akinTime = 0;
-            wildCard2 = true;
         }
         if (endPoint >= pm.getLength()) {
             wildCard1 = false;
