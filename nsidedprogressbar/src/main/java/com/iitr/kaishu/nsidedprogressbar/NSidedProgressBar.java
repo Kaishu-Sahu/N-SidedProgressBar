@@ -3,6 +3,7 @@ package com.iitr.kaishu.nsidedprogressbar;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.CornerPathEffect;
 import android.graphics.Paint;
 import android.graphics.Path;
@@ -57,7 +58,7 @@ public class NSidedProgressBar extends View {
     Path secPath;
     float times = 0;
     int genCount = 0;
-    int fps = 30;
+    int fps = 60;
     float totalDisStartPoint;
     float tempStartPoint = 0;
     int timetimes = 0;
@@ -100,7 +101,7 @@ public class NSidedProgressBar extends View {
         temp = new Paint();
         // temp.setPathEffect(corEffect);
         temp.setStrokeWidth(10);
-        temp.setColor(android.graphics.Color.RED);
+        temp.setColor(Color.parseColor("#5592fb"));
         temp.setStyle(Paint.Style.STROKE);
         degree = 5;
         Timer timer = new Timer();
@@ -383,8 +384,10 @@ public class NSidedProgressBar extends View {
         }
         float ga = Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
 
-        if (/*ga <= minDistance*/timetimes <= fps / 3) {
-           // whereToGo = 3;
+        if (ga <= minDistanceSec) {
+            akinTime = 0;
+            try {
+            } catch (Exception e) {}whereToGo = 3;
         }
         preWhereToGo = 2;
 
@@ -421,6 +424,7 @@ public class NSidedProgressBar extends View {
         }
 
         if (/*endPoint - initTag >= sideLength / 4*/ timetimes >= fps/3) {
+            timetimes = 0;
             whereToGo = 2;
         } else {
             whereToGo = 1;
@@ -434,6 +438,7 @@ public class NSidedProgressBar extends View {
         startPoint += withoutAcceleration;
         endPoint += withoutAcceleration;
         secPath.reset();
+        timetimes++;
 
         if (preWhereToGo != whereToGo) {
             initTag = startPoint;
@@ -465,12 +470,8 @@ public class NSidedProgressBar extends View {
         } else {
             whereToGo = 3;
         }*/
-        if (withAcceleration - velocity >= 5 || withAcceleration - velocity <= 5) {
-            if (genCount >= 20) {
-                whereToGo = 0;
-                genCount = 0;
-            }
-            genCount++;
+        if (/*withAcceleration - velocity >= 5 || withAcceleration - velocity <= 5*/timetimes >= fps/5) {
+        whereToGo = 0;
         } else {
             whereToGo = 3;
         }
