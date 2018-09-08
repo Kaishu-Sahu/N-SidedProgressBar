@@ -85,7 +85,7 @@ public class NSidedProgressBar extends View {
         primaryPaint.setStrokeWidth(5);
         primaryPaint.setStyle(Paint.Style.STROKE);
         path = new Path();
-        sideCount = 3;
+        sideCount = 5;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
         x1VertiCoord = new float[sideCount];
@@ -257,10 +257,6 @@ public class NSidedProgressBar extends View {
 
         }
 
-        startPoint += withAcceleration;
-        endPoint += withoutAcceleration;
-        secPath.reset();
-        tempStartPoint += withAcceleration;
 
 
         if (tempStartPoint <= totalDisStartPoint / 2) {
@@ -281,7 +277,10 @@ public class NSidedProgressBar extends View {
             }
 
         }
-
+        startPoint += withAcceleration;
+        endPoint += withoutAcceleration;
+        secPath.reset();
+        tempStartPoint += withAcceleration;
         float ga = endPoint - startPoint;
 
         if (ga <= minDistance && ga >= 0) {
@@ -329,9 +328,7 @@ public class NSidedProgressBar extends View {
 
         }
 
-        startPoint += withoutAcceleration;
-        endPoint += withAcceleration;
-        tempStartPoint += withAcceleration;
+
         secPath.reset();
         if (tempStartPoint <= totalDisStartPoint / 2) {
             akinTime += times;
@@ -348,6 +345,10 @@ public class NSidedProgressBar extends View {
             }
             akinTime -= times;
         }
+
+        startPoint += withoutAcceleration;
+        endPoint += withAcceleration;
+        tempStartPoint += withAcceleration;
    /*     if (endPoint >= pm.getLength() / 2) {
             akinTime -= 0.4;
         } else {
@@ -470,5 +471,11 @@ public class NSidedProgressBar extends View {
         preWhereToGo = 3;
     }
 
+
+    private void determinate() {
+        float[] movePoint = new float[2];
+        pm.getPosTan(sideLength/2, movePoint, null);
+
+    }
 
 }
