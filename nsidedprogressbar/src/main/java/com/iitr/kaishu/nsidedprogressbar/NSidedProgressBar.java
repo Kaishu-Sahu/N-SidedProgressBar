@@ -252,11 +252,11 @@ public class NSidedProgressBar extends View {
         }
         Log.d("TEST", akinTime+""
       );*/
-        timetimes+=1;
+
 
         if (wildCard2) {
             wildCard2 = false;
-            if (velocity * fps - minDistance >= startPoint) {
+            if (velocity * fps - minDistanceSec >= startPoint) {
                 totalDisStartPoint = pm.getLength() + velocity * fps - minDistance - minDistanceSec;
             } else {
                 totalDisStartPoint = pm.getLength() - (minDistanceSec - (velocity * fps - minDistance));
@@ -273,13 +273,18 @@ public class NSidedProgressBar extends View {
         secPath.reset();
         tempStartPoint += withAcceleration;
 
+
         if (tempStartPoint <= totalDisStartPoint / 2) {
             akinTime += times;
 
         } else {
 
             try {if (akinTime <= 0) {
+                wildCard2 = true;
+                timetimes = 0;
                 whereToGo = 1;
+                tempStartPoint = 0;
+                akinTime = 0;
             }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -290,9 +295,9 @@ public class NSidedProgressBar extends View {
         float ga = endPoint - startPoint;
 
         if (ga <= minDistance && ga >= 0) {
-            whereToGo = 1;
+           // whereToGo = 1;
 
-            tempStartPoint = 0;
+            //tempStartPoint = 0;
             akinTime = 0;
         }
         if (endPoint >= pm.getLength()) {
@@ -319,16 +324,46 @@ public class NSidedProgressBar extends View {
     }
 
     private void secondPath(Canvas canvas) {
+
+        if (wildCard2) {
+            wildCard2 = false;
+            tempStartPoint = 0;
+            timetimes = 0;
+            if (velocity * fps - minDistanceSec >= endPoint) {
+                totalDisStartPoint = pm.getLength() + velocity * fps - minDistance - minDistanceSec;
+            } else {
+                totalDisStartPoint = pm.getLength() - (minDistanceSec - (velocity * fps - minDistance));
+            }
+
+            times = (8 * ((totalDisStartPoint/2) - (velocity * fps/2))) / (fps * fps);
+
+        }
+
         startPoint += withoutAcceleration;
         endPoint += withAcceleration;
+        tempStartPoint += withAcceleration;
         secPath.reset();
+        if (tempStartPoint <= totalDisStartPoint / 2) {
+            akinTime += times;
 
-        if (endPoint >= pm.getLength() / 2) {
+        } else {
+
+            try {if (akinTime <= 0) {
+                wildCard2 = true;
+                timetimes = 0;
+                whereToGo = 3;
+            }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            akinTime -= times;
+        }
+   /*     if (endPoint >= pm.getLength() / 2) {
             akinTime -= 0.4;
         } else {
             akinTime += 0.5;
         }
-
+*/
         if (endPoint >= pm.getLength()) {
             endPoint = 0;
             wildCard1 = false;
@@ -343,19 +378,22 @@ public class NSidedProgressBar extends View {
             pm.getSegment(endPoint, pm.getLength(), secPath, true);
             canvas.drawPath(secPath, temp);
         } else {
-            pm.getSegment(endPoint, startPoint % pm.getLength(), secPath, true);
+            pm.getSegment(endPoint, startPoint , secPath, true);
             canvas.drawPath(secPath, temp);
         }
         float ga = Math.abs((startPoint % pm.getLength()) - (endPoint % pm.getLength()));
-        if (ga <= minDistance) {
-            whereToGo = 3;
+
+        if (/*ga <= minDistance*/timetimes <= fps / 3) {
+           // whereToGo = 3;
         }
         preWhereToGo = 2;
 
     }
 
     private void thirdPath(Canvas canvas) {
-        secPath.reset();
+
+        timetimes += 1;
+            secPath.reset();
 
         startPoint += withoutAcceleration;
         endPoint += withoutAcceleration;
@@ -382,7 +420,7 @@ public class NSidedProgressBar extends View {
             canvas.drawPath(secPath, temp);
         }
 
-        if (endPoint - initTag >= sideLength / 4) {
+        if (/*endPoint - initTag >= sideLength / 4*/ timetimes >= fps/3) {
             whereToGo = 2;
         } else {
             whereToGo = 1;
