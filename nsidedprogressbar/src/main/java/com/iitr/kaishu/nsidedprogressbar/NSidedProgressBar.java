@@ -9,7 +9,6 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -35,7 +34,7 @@ public class NSidedProgressBar extends View {
     private float progress;
     private float sideLength;
 
-    private Path path;
+    private Path basePath;
     private PathMeasure pm;
     float withoutAcceleration = 0;
     float withAcceleration = 0;
@@ -88,7 +87,7 @@ public class NSidedProgressBar extends View {
         primaryPaint.setColor(Color.GRAY);
         primaryPaint.setStrokeWidth(5);
         primaryPaint.setStyle(Paint.Style.STROKE);
-        path = new Path();
+        basePath = new Path();
         sideCount = 3;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
@@ -129,8 +128,8 @@ public class NSidedProgressBar extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
-        int viewWidth = 50 + this.getPaddingLeft() + this.getPaddingRight();
-        int viewHeight = 50 + this.getPaddingTop() + this.getPaddingBottom();
+        int viewWidth = this.getPaddingLeft() + this.getPaddingRight();
+        int viewHeight =  this.getPaddingTop() + this.getPaddingBottom();
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -159,15 +158,15 @@ public class NSidedProgressBar extends View {
         xCenter = width / 2;
         yCenter = height / 2;
         setCoordinates();
-        path.reset();
-        path.moveTo(x1VertiCoord[0], y1VertiCoord[0]);
+        basePath.reset();
+        basePath.moveTo(x1VertiCoord[0], y1VertiCoord[0]);
         for (int i = 0; i < sideCount; i++) {
-            path.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x2VertiCoord[i], y2VertiCoord[i]);
-            path.lineTo(x1VertiCoord[(i + 1) % sideCount], y1VertiCoord[(i + 1) % sideCount]);
+            basePath.cubicTo(x1VertiCoord[i], y1VertiCoord[i], xVertiCoord[i], yVertiCoord[i], x2VertiCoord[i], y2VertiCoord[i]);
+            basePath.lineTo(x1VertiCoord[(i + 1) % sideCount], y1VertiCoord[(i + 1) % sideCount]);
         }
-        path.close();
+        basePath.close();
         sideLength = pm.getLength() / sideCount;
-        pm.setPath(path, false);
+        pm.setPath(basePath, false);
 
         totalDisStartPoint = pm.getLength() + minDistance + velocity * fps + 250;
         setMeasuredDimension(width, height);
@@ -176,13 +175,14 @@ public class NSidedProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawPath(path, primaryPaint);
+       /* canvas.drawPath(basePath, primaryPaint);
         determinate(canvas);
-        canvas.drawPath(secPath, secondaryPaint);
-/*
+        canvas.drawPath(secPath, secondaryPaint);*/
+       //genCount+=1;
+       // canvas.rotate(genCount, canvas.getWidth()/2, getHeight()/2);
 
 
-        //canvas.drawPath(path, primaryPaint);
+        //canvas.drawPath(basePath, primaryPaint);
         withoutAcceleration = velocity;
         if (akinTime >= 0) {
             withAcceleration = velocity + akinTime;
@@ -198,7 +198,7 @@ public class NSidedProgressBar extends View {
               secondPath(canvas);
         } else if (whereToGo == 3) {
             forthPath(canvas);
-        }*/
+        }
     }
 
     private void setCoordinates() {
@@ -284,7 +284,9 @@ public class NSidedProgressBar extends View {
                 if (akinTime <= 0) {
                     wildCard2 = true;
                     timetimes = 0;
-                    whereToGo = 1;
+                   // whereToGo = 1;
+                     whereToGo = 2;
+
                     tempStartPoint = 0;
                     akinTime = 0;
                 }
@@ -307,6 +309,7 @@ public class NSidedProgressBar extends View {
         }
         if (endPoint >= pm.getLength()) {
             wildCard1 = false;
+            endPoint = 0;
         }
         if (startPoint >= pm.getLength()) {
             startPoint = 0;
@@ -355,7 +358,9 @@ public class NSidedProgressBar extends View {
                 if (akinTime <= 0) {
                     wildCard2 = true;
                     timetimes = 0;
-                    whereToGo = 3;
+//                    whereToGo = 3;
+                     whereToGo = 0;
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -396,7 +401,7 @@ public class NSidedProgressBar extends View {
             try {
             } catch (Exception e) {
             }
-            whereToGo = 3;
+            whereToGo = 0;
         }
         preWhereToGo = 2;
 
