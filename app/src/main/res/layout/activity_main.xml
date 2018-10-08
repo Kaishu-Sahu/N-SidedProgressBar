@@ -9,13 +9,13 @@
 
         <com.iitr.kaishu.nsidedprogressbar.NSidedProgressBar
             android:id="@+id/NSidedProgressBar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="8dp"
+            android:background="#6c6c6c"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:background="#6c6c6c"
             android:layout_gravity="center"/>
 
 <!--<ProgressBar
