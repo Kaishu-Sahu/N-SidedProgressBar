@@ -10,6 +10,7 @@ import android.graphics.Path;
 import android.graphics.PathMeasure;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,7 +21,8 @@ public class NSidedProgressBar extends View {
 
     private Paint primaryPaint;
     private Paint secondaryPaint;
-    private int sideCount;
+    private int sideCount = 3;
+
     private float[] xVertiCoord;
     private float[] yVertiCoord;
     private float[] x1VertiCoord;
@@ -31,7 +33,6 @@ public class NSidedProgressBar extends View {
     private float[] yMidPoints;
     private float xCenter;
     private float yCenter;
-    private float width;
     private float progress;
     private float sideLength;
     private int preSetHeight = 150;
@@ -92,7 +93,6 @@ public class NSidedProgressBar extends View {
         primaryPaint.setStrokeWidth(5);
         primaryPaint.setStyle(Paint.Style.STROKE);
         basePath = new Path();
-        sideCount = 3;
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
         x1VertiCoord = new float[sideCount];
@@ -160,11 +160,10 @@ public class NSidedProgressBar extends View {
             height = viewHeight;
         }
 
-
         xCenter = width / 2;
         yCenter = height / 2;
 
-        radius = xCenter-Math.max(getPaddingLeft()+getPaddingRight(), getPaddingTop()+getPaddingBottom());
+        radius = xCenter - Math.max(getPaddingLeft() + getPaddingRight(), getPaddingTop() + getPaddingBottom());
 
         setCoordinates();
         basePath.reset();
@@ -198,17 +197,16 @@ public class NSidedProgressBar extends View {
             withAcceleration = velocity + akinTime;
         } else {
             withAcceleration = velocity + 0.5F;
-
         }
         if (whereToGo == 0) {
             firstPath(canvas);
-        } else if (whereToGo == 1) {
+        } /*else if (whereToGo == 1) {
             thirdPath(canvas);
-        } else if (whereToGo == 2) {
+        }*/ else if (whereToGo == 2) {
             secondPath(canvas);
-        } else if (whereToGo == 3) {
+        } /*else if (whereToGo == 3) {
             forthPath(canvas);
-        }
+        }*/
     }
 
     private void setCoordinates() {
@@ -231,7 +229,6 @@ public class NSidedProgressBar extends View {
             yMidPoints[i] = (yVertiCoord[i] + yVertiCoord[(i + 1) % sideCount]) / 2;
         }
     }
-
 
 
     private void firstPath(Canvas canvas) {
@@ -263,37 +260,27 @@ public class NSidedProgressBar extends View {
 
         if (wildCard2) {
             wildCard2 = false;
-            if (velocity * fps - minDistanceSec >= startPoint) {
+            if (velocity * fps - minDistance >= startPoint) {
                 totalDisStartPoint = pm.getLength() + velocity * fps - minDistance - minDistanceSec;
             } else {
                 totalDisStartPoint = pm.getLength() - (minDistanceSec - (velocity * fps - minDistance));
             }
 
             times = (8 * ((totalDisStartPoint / 2) - (velocity * fps / 2))) / (fps * fps);
-            //  Log.d("TEST", totalDisStartPoint+" "+pm.getLength()+ " "+ startPoint + " " + times);
-            // Log.d("TEST", totalDisStartPoint+" "+pm.getLength());
 
         }
 
-
+        Log.d("TEST", akinTime + "");
         if (tempStartPoint <= totalDisStartPoint / 2) {
             akinTime += times;
 
         } else {
             akinTime -= times;
-
-            try {
-                if (akinTime <= 0) {
-                    wildCard2 = true;
-                    timetimes = 0;
-                    // whereToGo = 1;
-                    whereToGo = 2;
-
-                    tempStartPoint = 0;
-                    akinTime = 0;
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (akinTime <= 0) {
+                timetimes = 0;
+                whereToGo = 2;
+                tempStartPoint = 0;
+                akinTime = 0;
             }
 
         }
@@ -301,12 +288,11 @@ public class NSidedProgressBar extends View {
         endPoint += withoutAcceleration;
         secPath.reset();
         tempStartPoint += withAcceleration;
+
+
         float ga = endPoint - startPoint;
 
         if (ga <= minDistance && ga >= 0) {
-            // whereToGo = 1;
-
-            //tempStartPoint = 0;
             akinTime = 0;
         }
         if (endPoint >= pm.getLength()) {
@@ -327,7 +313,6 @@ public class NSidedProgressBar extends View {
 
 
         pm.getSegment(endPoint, startPoint, secPath, true);
-
         canvas.drawPath(secPath, secondaryPaint);
         preWhereToGo = 0;
 
@@ -360,7 +345,6 @@ public class NSidedProgressBar extends View {
                 if (akinTime <= 0) {
                     wildCard2 = true;
                     timetimes = 0;
-//                    whereToGo = 3;
                     whereToGo = 0;
 
                 }
@@ -373,12 +357,7 @@ public class NSidedProgressBar extends View {
         startPoint += withoutAcceleration;
         endPoint += withAcceleration;
         tempStartPoint += withAcceleration;
-   /*     if (endPoint >= pm.getLength() / 2) {
-            akinTime -= 0.4;
-        } else {
-            akinTime += 0.5;
-        }
-*/
+
         if (endPoint >= pm.getLength()) {
             endPoint = 0;
             wildCard1 = false;
@@ -516,5 +495,30 @@ public class NSidedProgressBar extends View {
 
     public void setProgress(float progress) {
         this.progress = progress;
+    }
+
+
+    public Paint getPrimaryPaint() {
+        return primaryPaint;
+    }
+
+    public void setPrimaryPaint(Paint primaryPaint) {
+        this.primaryPaint = primaryPaint;
+    }
+
+    public Paint getSecondaryPaint() {
+        return secondaryPaint;
+    }
+
+    public void setSecondaryPaint(Paint secondaryPaint) {
+        this.secondaryPaint = secondaryPaint;
+    }
+
+    public int getSideCount() {
+        return sideCount;
+    }
+
+    public void setSideCount(int sideCount) {
+        this.sideCount = sideCount;
     }
 }
