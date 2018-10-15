@@ -9,8 +9,8 @@
 
         <com.iitr.kaishu.nsidedprogressbar.NSidedProgressBar
             android:id="@+id/NSidedProgressBar"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:layout_gravity="center"/>
 <ProgressBar
     android:layout_width="100dp"

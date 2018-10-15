@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PathMeasure;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -47,6 +48,8 @@ public class NSidedProgressBar extends View {
     private boolean tempState2 = true;
     private float tempStartPoint = 0;
     private boolean exit = false;
+    private int tempPriColorPos = 0;
+    private int tempSecColorPos = 0;
 
 
     //Properties
@@ -57,6 +60,8 @@ public class NSidedProgressBar extends View {
     private float minDistance = 70;
     private float minDistanceSec = 40;
     private boolean isClockWise = false;
+    private int[] primaryColors;
+    private int[] secondaryColors;
 
     //Init
     private float sideLength;
@@ -73,11 +78,12 @@ public class NSidedProgressBar extends View {
     private float sideProgress = 0;
     private float initialPosition = 0;
     private float radius = 0;
-    private Timer timer;
+    private static Timer timer;
 
-    public NSidedProgressBar(Context context) {
+    public NSidedProgressBar(Context context, int sideCount) {
         super(context);
         this.context = context;
+        this.sideCount = sideCount;
         initProgressBar();
     }
 
@@ -96,11 +102,16 @@ public class NSidedProgressBar extends View {
     }
 
     private void initProgressBar() {
-        setPaints();
+
         basePath = new Path();
         secPath = new Path();
         pathMeasure = new PathMeasure();
-        timer = new Timer();
+
+        primaryColors = new int[1];
+        secondaryColors = new int[1];
+        primaryColors[0] = Color.parseColor("#E0E0E0");
+        secondaryColors[0] = Color.parseColor("#6499fa");
+        setPaints();
 
         xVertiCoord = new float[sideCount];
         yVertiCoord = new float[sideCount];
@@ -116,14 +127,15 @@ public class NSidedProgressBar extends View {
 
     private void setPaints() {
         primaryPaint = new Paint();
-        primaryPaint.setColor(Color.GRAY);
-        primaryPaint.setStrokeWidth(5);
+        primaryPaint.setStrokeWidth(8);
         primaryPaint.setStyle(Paint.Style.STROKE);
 
         secondaryPaint = new Paint();
         secondaryPaint.setStrokeWidth(10);
-        secondaryPaint.setColor(Color.parseColor("#5592fb"));
         secondaryPaint.setStyle(Paint.Style.STROKE);
+
+        primaryPaint.setColor(primaryColors[tempPriColorPos]);
+        secondaryPaint.setColor(secondaryColors[tempSecColorPos]);
     }
 
     @Override
@@ -161,7 +173,7 @@ public class NSidedProgressBar extends View {
         xCenter = width / 2;
         yCenter = height / 2;
 
-        radius = xCenter - Math.max(getPaddingLeft() + getPaddingRight(), getPaddingTop() + getPaddingBottom());
+        radius = xCenter - Math.max(getPaddingLeft() + getPaddingRight(), getPaddingTop() + getPaddingBottom()) - 10;
         initiateDraw();
 
         setMeasuredDimension(width, height);
@@ -181,6 +193,7 @@ public class NSidedProgressBar extends View {
         pathMeasure.setPath(basePath, false);
 
         totalDisStartPoint = pathMeasure.getLength() + minDistance + baseSpeed * fps + 250;
+        timer = new Timer();
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -191,21 +204,16 @@ public class NSidedProgressBar extends View {
                     }
                 });
             }
-        }, 0, 1000 / fps);
+        }, 0, 1000 / fps);timer.purge();
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        // determinate(canvas);
-       /* canvas.drawPath(basePath, primaryPaint);
 
-        canvas.drawPath(secPath, secondaryPaint);*/
-        //genCount+=1;
-        // canvas.rotate(genCount, canvas.getWidth()/2, getHeight()/2);
+        canvas.drawPath(basePath, primaryPaint);
 
 
-        //canvas.drawPath(basePath, primaryPaint);
         withoutAcceleration = baseSpeed;
         if (akinTime >= 0) {
             withAcceleration = baseSpeed + akinTime;
@@ -248,7 +256,7 @@ public class NSidedProgressBar extends View {
 
     private void xmlAttributes(TypedArray array) {
 
-        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
+       /* DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
         barWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, barWidth, metrics);
         rimWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, rimWidth, metrics);
         circleRadius =
@@ -281,7 +289,7 @@ public class NSidedProgressBar extends View {
         }
 
         // Recycle
-        a.recycle();
+        a.recycle();*/
     }
 
 
@@ -413,9 +421,17 @@ public class NSidedProgressBar extends View {
             exit = false;
             akinTime = 0;
             whereToGo = 1;
+
         }
 
     }
+
+
+    private void onSpinComplete() {
+        primaryPaint.setColor(primaryColors[(tempPriColorPos+1) % primaryColors.length]);
+        secondaryPaint.setColor(secondaryColors[(tempSecColorPos+1) % secondaryColors.length]);
+    }
+
 
     private void determinate(Canvas canvas) {
         secPath.reset();
@@ -433,9 +449,57 @@ public class NSidedProgressBar extends View {
         }
     }
 
+    @Override
+    protected void onVisibilityChanged(@NonNull View changedView, int visibility) {
+        super.onVisibilityChanged(changedView, visibility);
+        if (visibility == View.INVISIBLE) {
+            timer.cancel();
+        } else {
+            timer=new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    ((Activity) context).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            NSidedProgressBar.this.invalidate();
+                        }
+                    });
+                }
+            }, 0, 1000 / fps);
+        }
+
+    }
+
 
     public void setProgress(float progress) {
         this.progress = progress;
+    }
+
+
+    public void setPrimaryPaint(Paint primaryPaint) {
+        this.primaryPaint = primaryPaint;
+    }
+
+    public void setPrimaryPaintColors(int[] color) {
+        this.primaryColors = color;
+    }
+
+    public void setSecondaryPaint(Paint secondaryPaint) {
+        this.secondaryPaint = secondaryPaint;
+    }
+
+    public void setSecondaryPaintColors(int[] color) {
+        this.secondaryColors = color;
+    }
+
+    public void setSideCount(int sideCount) {
+        this.sideCount = sideCount;
+    }
+
+
+    public void setBaseSpeed(float baseSpeed) {
+        this.baseSpeed = baseSpeed;
     }
 
 
@@ -443,36 +507,25 @@ public class NSidedProgressBar extends View {
         return primaryPaint;
     }
 
-    public void setPrimaryPaint(Paint primaryPaint) {
-        this.primaryPaint = primaryPaint;
-    }
 
     public Paint getSecondaryPaint() {
         return secondaryPaint;
     }
 
-    public void setSecondaryPaint(Paint secondaryPaint) {
-        this.secondaryPaint = secondaryPaint;
-    }
 
     public int getSideCount() {
         return sideCount;
     }
 
-    public void setSideCount(int sideCount) {
-        this.sideCount = sideCount;
-    }
 
     public float getBaseSpeed() {
         return baseSpeed;
     }
 
-    public void setBaseSpeed(float baseSpeed) {
-        this.baseSpeed = baseSpeed;
-    }
 
     public void update() {
-        timer.purge();
+        timer.cancel();
         initiateDraw();
     }
+
 }

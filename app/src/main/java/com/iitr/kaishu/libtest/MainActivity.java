@@ -1,10 +1,12 @@
 package com.iitr.kaishu.libtest;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.Toast;
@@ -18,14 +20,22 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final NSidedProgressBar nSidedProgressBar = findViewById(R.id.NSidedProgressBar);
-
+        int[] priCol = {Color.RED, Color.GREEN, Color.BLUE};
+        nSidedProgressBar.setSecondaryPaintColors(priCol);
+        Paint aa = new Paint();
+        /*aa.setColor(Color.RED);
+        aa.setStrokeWidth(12);
+        aa.setStyle(Paint.Style.STROKE);
+        nSidedProgressBar.setPrimaryPaint(aa);*/
 
         Handler a = new Handler();
         a.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Paint aa = new Paint();
-                aa.setColor(Color.RED);
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage("com.whatsapp");
+                if (launchIntent != null) {
+                  //  startActivity(launchIntent);//null pointer check in case package name was not found
+                }
             }
         },5000);
 
