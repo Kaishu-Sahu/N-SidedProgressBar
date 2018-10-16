@@ -21,8 +21,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         final NSidedProgressBar nSidedProgressBar = findViewById(R.id.NSidedProgressBar);
         int[] priCol = {Color.RED, Color.GREEN, Color.BLUE};
-        nSidedProgressBar.setSecondaryPaintColors(priCol);
+       // nSidedProgressBar.setSecondaryPaintColors(priCol);
         Paint aa = new Paint();
+
         /*aa.setColor(Color.RED);
         aa.setStrokeWidth(12);
         aa.setStyle(Paint.Style.STROKE);
