@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:NSidedProgressBar="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,6 +12,10 @@
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_gravity="center"
+            app:nsidedProg_secondaryColor="@color/colorAccent"
+            app:nsidedProg_sideCount="110"
+            app:nsidedProg_baseSpeed="8"
+
             />
 <ProgressBar
     android:layout_width="100dp"

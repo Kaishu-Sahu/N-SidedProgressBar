@@ -12,8 +12,8 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -49,20 +49,18 @@ public class NSidedProgressBar extends View {
     private boolean tempState2 = true;
     private float tempStartPoint = 0;
     private boolean exit = false;
-    private int tempPriColorPos = 0;
-    private int tempSecColorPos = 0;
 
 
     //Properties
-    private int sideCount = 500;
-    private int fps = 60;
+    private int sideCount = 4;
+    private int refreshRate = 60;
     private float progress = 0;
-    private float baseSpeed = 5;
+    private float baseSpeed = 10;
     private float minDistance = 70;
-    private float minDistanceSec = 20;
+    private float minDistanceSec = 40;
     private boolean isClockWise = true;
-    private int[] primaryColors;
-    private int[] secondaryColors;
+    private int primaryColor;
+    private int secondaryColor;
 
     //Init
     private float sideLength;
@@ -80,7 +78,7 @@ public class NSidedProgressBar extends View {
     private float initialPosition = 0;
     private float radius = 0;
     private Timer timer;
-    private Handler handler;
+
 
     public NSidedProgressBar(Context context, int sideCount) {
         super(context);
@@ -109,12 +107,6 @@ public class NSidedProgressBar extends View {
         secPath = new Path();
         pathMeasure = new PathMeasure();
 
-        primaryColors = new int[1];
-        secondaryColors = new int[3];
-        primaryColors[0] = Color.parseColor("#E0E0E0");
-        secondaryColors[0] = Color.parseColor("#6499fa");
-        secondaryColors[1] = Color.parseColor("#ff0000");
-        secondaryColors[2] = Color.parseColor("#00ff00");
         setPaints();
 
         xVertiCoord = new float[sideCount];
@@ -125,9 +117,6 @@ public class NSidedProgressBar extends View {
         y2VertiCoord = new float[sideCount];
         xMidPoints = new float[sideCount];
         yMidPoints = new float[sideCount];
-
-        handler = new Handler();
-
 
     }
 
@@ -140,8 +129,8 @@ public class NSidedProgressBar extends View {
         secondaryPaint.setStrokeWidth(10);
         secondaryPaint.setStyle(Paint.Style.STROKE);
 
-        primaryPaint.setColor(primaryColors[tempPriColorPos]);
-        secondaryPaint.setColor(secondaryColors[tempSecColorPos]);
+        primaryPaint.setColor(primaryColor);
+        secondaryPaint.setColor(secondaryColor);
     }
 
     @Override
@@ -198,26 +187,7 @@ public class NSidedProgressBar extends View {
         sideLength = pathMeasure.getLength() / sideCount;
         pathMeasure.setPath(basePath, false);
 
-        totalDisStartPoint = pathMeasure.getLength() + minDistance + baseSpeed * fps + 250;
-        /*timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                ((Activity) context).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //    NSidedProgressBar.this.invalidate();
-                    }
-                });
-            }
-        }, 0, 1000 / fps);
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //   NSidedProgressBar.this.invalidate();
-            }
-        }, 1000 / fps);*/
-
+        totalDisStartPoint = pathMeasure.getLength() + minDistance + baseSpeed * refreshRate + 250;
     }
 
     @Override
@@ -268,54 +238,24 @@ public class NSidedProgressBar extends View {
 
 
     private void xmlAttributes(TypedArray array) {
-
-       /* DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-        barWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, barWidth, metrics);
-        rimWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, rimWidth, metrics);
-        circleRadius =
-                (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, circleRadius, metrics);
-
-        circleRadius =
-                (int) a.getDimension(R.styleable.ProgressWheel_matProg_circleRadius, circleRadius);
-
-        fillRadius = a.getBoolean(R.styleable.ProgressWheel_matProg_fillRadius, false);
-
-        barWidth = (int) a.getDimension(R.styleable.ProgressWheel_matProg_barWidth, barWidth);
-
-        rimWidth = (int) a.getDimension(R.styleable.ProgressWheel_matProg_rimWidth, rimWidth);
-
-        float baseSpinSpeed =
-                a.getFloat(R.styleable.ProgressWheel_matProg_spinSpeed, spinSpeed / 360.0f);
-        spinSpeed = baseSpinSpeed * 360;
-
-        barSpinCycleTime =
-                a.getInt(R.styleable.ProgressWheel_matProg_barSpinCycleTime, (int) barSpinCycleTime);
-
-        barColor = a.getColor(R.styleable.ProgressWheel_matProg_barColor, barColor);
-
-        rimColor = a.getColor(R.styleable.ProgressWheel_matProg_rimColor, rimColor);
-
-        linearProgress = a.getBoolean(R.styleable.ProgressWheel_matProg_linearProgress, false);
-
-        if (a.getBoolean(R.styleable.ProgressWheel_matProg_progressIndeterminate, false)) {
-            spin();
-        }
-
-        // Recycle
-        a.recycle();*/
+        sideCount = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_sideCount, 3);
+        primaryColor = array.getColor(R.styleable.NSidedProgressBar_nsidedProg_primaryColor, Color.parseColor("#E0E0E0"));
+        secondaryColor = array.getColor(R.styleable.NSidedProgressBar_nsidedProg_secondaryColor, Color.parseColor("#6499fa"));
+        baseSpeed = array.getFloat(R.styleable.NSidedProgressBar_nsidedProg_baseSpeed, 5);
+        refreshRate = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_refreshRate, 60);
     }
 
 
     private void firstPath(Canvas canvas) {
         if (tempState2) {
             tempState2 = false;
-            if (baseSpeed * fps - minDistance >= startPoint) {
-                totalDisStartPoint = pathMeasure.getLength() + baseSpeed * fps - minDistance - minDistanceSec;
+            if (baseSpeed * refreshRate - minDistance >= startPoint) {
+                totalDisStartPoint = pathMeasure.getLength() + baseSpeed * refreshRate - minDistance - minDistanceSec;
             } else {
-                totalDisStartPoint = pathMeasure.getLength() - (minDistanceSec - (baseSpeed * fps - minDistance));
+                totalDisStartPoint = pathMeasure.getLength() - (minDistanceSec - (baseSpeed * refreshRate - minDistance));
             }
 
-            times = (8 * ((totalDisStartPoint / 2) - (baseSpeed * fps / 2))) / (fps * fps);
+            times = (8 * ((totalDisStartPoint / 2) - (baseSpeed * refreshRate / 2))) / (refreshRate * refreshRate);
 
         }
         if (tempStartPoint <= totalDisStartPoint / 2) {
@@ -372,16 +312,15 @@ public class NSidedProgressBar extends View {
     }
 
     private void secondPath(Canvas canvas) {
-
         if (tempState2) {
             tempState2 = false;
             tempStartPoint = 0;
-            if (baseSpeed * fps - minDistanceSec >= endPoint) {
-                totalDisStartPoint = pathMeasure.getLength() + baseSpeed * fps - minDistance - minDistanceSec;
+            if (baseSpeed * refreshRate - minDistanceSec >= endPoint) {
+                totalDisStartPoint = pathMeasure.getLength() + baseSpeed * refreshRate - minDistance - minDistanceSec;
             } else {
-                totalDisStartPoint = pathMeasure.getLength() - (minDistanceSec - (baseSpeed * fps - minDistance));
+                totalDisStartPoint = pathMeasure.getLength() - (minDistanceSec - (baseSpeed * refreshRate - minDistance));
             }
-            times = (8 * ((totalDisStartPoint / 2) - (baseSpeed * fps / 2))) / (fps * fps);
+            times = (8 * ((totalDisStartPoint / 2) - (baseSpeed * refreshRate / 2))) / (refreshRate * refreshRate);
         }
 
         secPath.reset();
@@ -437,12 +376,6 @@ public class NSidedProgressBar extends View {
     }
 
 
-    private void onSpinComplete() {
-        primaryPaint.setColor(primaryColors[(++tempPriColorPos) % primaryColors.length]);
-        secondaryPaint.setColor(secondaryColors[(++tempSecColorPos) % secondaryColors.length]);
-    }
-
-
     private void determinate(Canvas canvas) {
         secPath.reset();
 
@@ -477,7 +410,7 @@ public class NSidedProgressBar extends View {
                         }
                     });
                 }
-            }, 0, 1000 / fps);
+            }, 0, 1000 / refreshRate);
         }
     }
 
@@ -491,16 +424,19 @@ public class NSidedProgressBar extends View {
         this.primaryPaint = primaryPaint;
     }
 
-    public void setPrimaryPaintColors(int[] color) {
-        this.primaryColors = color;
+    public void setPrimaryPaintColors(int color) {
+        this.primaryColor = color;
+        primaryPaint.setColor(color);
+
     }
 
     public void setSecondaryPaint(Paint secondaryPaint) {
         this.secondaryPaint = secondaryPaint;
     }
 
-    public void setSecondaryPaintColors(int[] color) {
-        this.secondaryColors = color;
+    public void setSecondaryPaintColors(int color) {
+        this.secondaryColor = color;
+        secondaryPaint.setColor(color);
     }
 
     public void setSideCount(int sideCount) {
@@ -539,5 +475,4 @@ public class NSidedProgressBar extends View {
         }
         initiateDraw();
     }
-
 }
