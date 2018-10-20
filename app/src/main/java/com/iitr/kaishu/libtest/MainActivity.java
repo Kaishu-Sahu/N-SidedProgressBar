@@ -20,7 +20,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final NSidedProgressBar nSidedProgressBar = findViewById(R.id.NSidedProgressBar);
-
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+            }
+        },5000);
 
     }
 }

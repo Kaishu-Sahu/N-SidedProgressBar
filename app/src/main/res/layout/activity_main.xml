@@ -9,19 +9,13 @@
 
         <com.iitr.kaishu.nsidedprogressbar.NSidedProgressBar
             android:id="@+id/NSidedProgressBar"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
             android:layout_gravity="center"
-            app:nsidedProg_secondaryColor="@color/colorAccent"
-            app:nsidedProg_sideCount="110"
-            app:nsidedProg_baseSpeed="8"
-
+            app:nsidedProg_baseSpeed="5"
+            app:nsidedProg_sideCount="30"
             />
-<ProgressBar
-    android:layout_width="100dp"
-    android:layout_height="100dp"
-    android:animationResolution="1000"
-    />
+
 </FrameLayout>
     <!--    <android.support.v7.widget.AppCompatSeekBar
             android:id="@+id/seekBar"

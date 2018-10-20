@@ -6,5 +6,7 @@
         <attr name="nsidedProg_secondaryColor" format="color" />
         <attr name="nsidedProg_baseSpeed" format="float" />
         <attr name="nsidedProg_refreshRate" format="integer" />
+        <attr name="nsidedProg_primaryRimWidth" format="float" />
+        <attr name="nsidedProg_secondaryRimWidth" format="float" />
     </declare-styleable>
 </resources>

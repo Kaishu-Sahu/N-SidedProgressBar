@@ -52,15 +52,17 @@ public class NSidedProgressBar extends View {
 
 
     //Properties
-    private int sideCount = 4;
+    private int sideCount = 3;
     private int refreshRate = 60;
     private float progress = 0;
-    private float baseSpeed = 10;
+    private float baseSpeed = 5;
     private float minDistance = 70;
     private float minDistanceSec = 40;
     private boolean isClockWise = true;
     private int primaryColor;
     private int secondaryColor;
+    private float primaryRimWidth = 8;
+    private float secondaryRimWidth = 9;
 
     //Init
     private float sideLength;
@@ -80,24 +82,33 @@ public class NSidedProgressBar extends View {
     private Timer timer;
 
 
-    public NSidedProgressBar(Context context, int sideCount) {
+    public NSidedProgressBar(Context context, int sideCount) throws Exception{
         super(context);
         this.context = context;
         this.sideCount = sideCount;
+        if (sideCount <= 2) {
+            throw new Exception("sideCount should be greater than 2");
+        }
         initProgressBar();
     }
 
-    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs) {
+    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs) throws Exception{
         super(context, attrs);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
+        if (sideCount <= 2) {
+            throw new Exception("sideCount should be greater than 2");
+        }
         initProgressBar();
     }
 
-    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) throws Exception{
         super(context, attrs, defStyleAttr);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
+        if (sideCount <= 2) {
+            throw new Exception("sideCount should be greater than 2");
+        }
         initProgressBar();
     }
 
@@ -122,11 +133,11 @@ public class NSidedProgressBar extends View {
 
     private void setPaints() {
         primaryPaint = new Paint();
-        primaryPaint.setStrokeWidth(8);
+        primaryPaint.setStrokeWidth(primaryRimWidth);
         primaryPaint.setStyle(Paint.Style.STROKE);
 
         secondaryPaint = new Paint();
-        secondaryPaint.setStrokeWidth(10);
+        secondaryPaint.setStrokeWidth(secondaryRimWidth);
         secondaryPaint.setStyle(Paint.Style.STROKE);
 
         primaryPaint.setColor(primaryColor);
@@ -194,6 +205,8 @@ public class NSidedProgressBar extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+
+//        determinate(canvas);
         canvas.drawPath(basePath, primaryPaint);
 
 
@@ -243,6 +256,8 @@ public class NSidedProgressBar extends View {
         secondaryColor = array.getColor(R.styleable.NSidedProgressBar_nsidedProg_secondaryColor, Color.parseColor("#6499fa"));
         baseSpeed = array.getFloat(R.styleable.NSidedProgressBar_nsidedProg_baseSpeed, 5);
         refreshRate = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_refreshRate, 60);
+        primaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_primaryRimWidth, 8);
+        secondaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_secondaryRimWidth, 9);
     }
 
 
