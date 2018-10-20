@@ -1,5 +1,9 @@
 # N-SidedProgressBar 
 
+[![Platform](https://img.shields.io/badge/platform-Android-yellow.svg)](https://www.android.com)
+![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+
+
 Progress Bar in the shape of regular polygon.
 
 ![1](/gifs/1.gif)
