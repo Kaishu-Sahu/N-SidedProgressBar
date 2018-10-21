@@ -47,6 +47,8 @@ Properties which can be set from xml:-
 * ```nsidedProg_primaryRimWidth```: set the width of unmovable part.
 * ```nsidedProg_secondaryRimWidth```: set the width of movable part.
 * ```nsidedProg_isClockwise```: set the nature of rotation.
+* ```nsidedProg_isDeterminate```: set the nature of progress bar.
+* ```nsidedProg_startSide```: set the starting point of determinate progress bar.
 
 ## License
 N-sidedProgressBar is licensed under MIT license. View [license](LICENSE).
