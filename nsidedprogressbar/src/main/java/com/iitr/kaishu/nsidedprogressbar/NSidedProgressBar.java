@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -59,10 +60,12 @@ public class NSidedProgressBar extends View {
     private float minDistance = 70;
     private float minDistanceSec = 40;
     private boolean isClockWise = true;
-    private int primaryColor;
-    private int secondaryColor;
+    private int primaryColor = Color.parseColor("#6499fa");
+    private int secondaryColor = Color.parseColor("#E0E0E0");
     private float primaryRimWidth = 8;
     private float secondaryRimWidth = 9;
+    private int startSide = 1;
+    private boolean isDeterminate = false;
 
     //Init
     private float sideLength;
@@ -82,32 +85,31 @@ public class NSidedProgressBar extends View {
     private Timer timer;
 
 
-    public NSidedProgressBar(Context context, int sideCount) throws Exception{
+    public NSidedProgressBar(Context context, int sideCount) {
         super(context);
         this.context = context;
         this.sideCount = sideCount;
         if (sideCount <= 2) {
-            throw new Exception("sideCount should be greater than 2");
+
         }
         initProgressBar();
     }
 
-    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs) throws Exception{
+    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
         if (sideCount <= 2) {
-            throw new Exception("sideCount should be greater than 2");
         }
         initProgressBar();
     }
 
-    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) throws Exception{
+    public NSidedProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
         if (sideCount <= 2) {
-            throw new Exception("sideCount should be greater than 2");
+
         }
         initProgressBar();
     }
@@ -156,7 +158,6 @@ public class NSidedProgressBar extends View {
         int heightMode = MeasureSpec.getMode(heightMeasureSpec);
         int heightSize = MeasureSpec.getSize(heightMeasureSpec);
 
-
         int width;
         int height;
 
@@ -204,22 +205,23 @@ public class NSidedProgressBar extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
-
-//        determinate(canvas);
         canvas.drawPath(basePath, primaryPaint);
 
-
-        withoutAcceleration = baseSpeed;
-        if (akinTime >= 0) {
-            withAcceleration = baseSpeed + akinTime;
+        if (isDeterminate) {
+            determinate(canvas, startSide);
         } else {
-            withAcceleration = baseSpeed + 0.5F;
-        }
-        if (whereToGo == 1) {
-            firstPath(canvas);
-        } else if (whereToGo == 2) {
-            secondPath(canvas);
+
+            withoutAcceleration = baseSpeed;
+            if (akinTime >= 0) {
+                withAcceleration = baseSpeed + akinTime;
+            } else {
+                withAcceleration = baseSpeed + 0.5F;
+            }
+            if (whereToGo == 1) {
+                firstPath(canvas);
+            } else if (whereToGo == 2) {
+                secondPath(canvas);
+            }
         }
     }
 
@@ -258,6 +260,9 @@ public class NSidedProgressBar extends View {
         refreshRate = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_refreshRate, 60);
         primaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_primaryRimWidth, 8);
         secondaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_secondaryRimWidth, 9);
+        isClockWise = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_isClockwise, true);
+        isDeterminate = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_isDeterminate, false);
+        startSide = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_startSide, 1);
     }
 
 
@@ -391,9 +396,11 @@ public class NSidedProgressBar extends View {
     }
 
 
-    private void determinate(Canvas canvas) {
+    private void determinate(Canvas canvas, int startSide) {
         secPath.reset();
-
+        if (startSide <= sideCount && startSide > 0) {
+            canvas.rotate(startSide * 360 / sideCount, xCenter, yCenter);
+        }
         initialPosition = (float) Math.hypot(x1VertiCoord[0] - xMidPoints[0], y1VertiCoord[0] - yMidPoints[0]);
         sideProgress = pathMeasure.getLength() * progress / 100;
         if (sideProgress + initialPosition > pathMeasure.getLength()) {
@@ -489,5 +496,21 @@ public class NSidedProgressBar extends View {
             timer.cancel();
         }
         initiateDraw();
+    }
+
+    public int getStartSide() {
+        return startSide;
+    }
+
+    public void setStartSide(int startSide) {
+        this.startSide = startSide;
+    }
+
+    public boolean isDeterminate() {
+        return isDeterminate;
+    }
+
+    public void setDeterminate(boolean determinate) {
+        isDeterminate = determinate;
     }
 }

@@ -8,5 +8,8 @@
         <attr name="nsidedProg_refreshRate" format="integer" />
         <attr name="nsidedProg_primaryRimWidth" format="float" />
         <attr name="nsidedProg_secondaryRimWidth" format="float" />
+        <attr name="nsidedProg_isClockwise" format="boolean" />
+        <attr name="nsidedProg_isDeterminate" format="boolean" />
+        <attr name="nsidedProg_startSide" format="integer" />
     </declare-styleable>
 </resources>
