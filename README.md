@@ -24,7 +24,7 @@ To create NSidedProgressBar in xml :-
         android:layout_gravity="center"
         app:nsidedProg_baseSpeed="5"
         app:nsidedProg_sideCount="3"
-        app:nsidedProg_isClockwise="true"
+        app:nsidedProg_clockwise="true"
         />
 ...
 ```
@@ -46,7 +46,7 @@ Properties which can be set from xml:-
 * ```nsidedProg_refreshRate```: set the fps of animation.
 * ```nsidedProg_primaryRimWidth```: set the width of unmovable part.
 * ```nsidedProg_secondaryRimWidth```: set the width of movable part.
-* ```nsidedProg_isClockwise```: set the nature of rotation.
+* ```nsidedProg_clockwise```: set the nature of rotation.
 * ```nsidedProg_isDeterminate```: set the nature of progress bar.
 * ```nsidedProg_startSide```: set the starting point of determinate progress bar.
 
