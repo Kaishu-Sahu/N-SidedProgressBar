@@ -12,7 +12,7 @@ Progress Bar in the shape of regular polygon.
 
 
 ## Usage
-*To create NSidedProgressBar in xml :- 
+To create NSidedProgressBar in xml :- 
 ```xml
 ...
 <com.iitr.kaishu.nsidedprogressbar.NSidedProgressBar
@@ -28,7 +28,7 @@ Progress Bar in the shape of regular polygon.
 ```
 Don't forget to add ```xmlns:app="http://schemas.android.com/apk/res-auto"```
 
-*Or in Java
+Or in Java
 ```java
 ....
 NSidedProgressBar nSidedProgressBar  = new NSidedProgressBar(this, 3);
