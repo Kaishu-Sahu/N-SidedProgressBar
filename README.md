@@ -2,6 +2,8 @@
 
 [![Platform](https://img.shields.io/badge/platform-Android-yellow.svg)](https://www.android.com)
 ![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)
+![GitHub](https://img.shields.io/badge/status-Under%20development-yellow.svg)
+
 
 
 Progress Bar in the shape of regular polygon.
