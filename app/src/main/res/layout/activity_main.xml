@@ -14,9 +14,7 @@
     android:layout_height="75dp"
     android:layout_gravity="center"
     app:nsidedProg_baseSpeed="5"
-    app:nsidedProg_sideCount="4"
-    app:nsidedProg_startSide="4"
-    app:nsidedProg_isDeterminate="true"/>
+    app:nsidedProg_sideCount="3" />
 
     <SeekBar
         android:id="@+id/seekBar"

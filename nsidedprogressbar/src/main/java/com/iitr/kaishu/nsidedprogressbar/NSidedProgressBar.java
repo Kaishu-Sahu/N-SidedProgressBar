@@ -260,8 +260,8 @@ public class NSidedProgressBar extends View {
         refreshRate = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_refreshRate, 60);
         primaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_primaryRimWidth, 8);
         secondaryRimWidth = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_secondaryRimWidth, 9);
-        isClockWise = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_isClockwise, true);
-        isDeterminate = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_isDeterminate, false);
+        isClockWise = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_clockwise, true);
+        isDeterminate = array.getBoolean(R.styleable.NSidedProgressBar_nsidedProg_determinate, false);
         startSide = array.getInt(R.styleable.NSidedProgressBar_nsidedProg_startSide, 1);
     }
 
