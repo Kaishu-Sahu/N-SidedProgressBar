@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletionException;
 
 public class NSidedProgressBar extends View {
 
@@ -91,6 +92,8 @@ public class NSidedProgressBar extends View {
         this.sideCount = sideCount;
         if (sideCount > 2) {
             initProgressBar();
+        } else {
+            throw new RuntimeException("sideCount should be greater than 2");
         }
     }
 
@@ -100,6 +103,8 @@ public class NSidedProgressBar extends View {
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
         if (sideCount > 2) {
             initProgressBar();
+        } else {
+            throw new RuntimeException("sideCount should be greater than 2");
         }
     }
 
@@ -110,6 +115,8 @@ public class NSidedProgressBar extends View {
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
         if (sideCount > 2) {
             initProgressBar();
+        } else {
+            throw new RuntimeException("sideCount should be greater than 2");
         }
     }
 
