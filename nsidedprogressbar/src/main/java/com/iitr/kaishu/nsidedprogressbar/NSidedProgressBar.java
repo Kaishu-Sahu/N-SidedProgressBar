@@ -89,29 +89,28 @@ public class NSidedProgressBar extends View {
         super(context);
         this.context = context;
         this.sideCount = sideCount;
-        if (sideCount <= 2) {
-
+        if (sideCount > 2) {
+            initProgressBar();
         }
-        initProgressBar();
     }
 
     public NSidedProgressBar(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
-        if (sideCount <= 2) {
+        if (sideCount > 2) {
+            initProgressBar();
         }
-        initProgressBar();
     }
 
+    //currently useless
     public NSidedProgressBar(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         this.context = context;
         xmlAttributes(context.obtainStyledAttributes(attrs, R.styleable.NSidedProgressBar));
-        if (sideCount <= 2) {
-
+        if (sideCount > 2) {
+            initProgressBar();
         }
-        initProgressBar();
     }
 
     private void initProgressBar() {

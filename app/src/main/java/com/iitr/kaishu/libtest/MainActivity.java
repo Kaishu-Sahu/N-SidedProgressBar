@@ -22,32 +22,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final NSidedProgressBar nSidedProgressBar = findViewById(R.id.nsidedprogressbar);
-        SeekBar seekBar = findViewById(R.id.seekBar);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                nSidedProgressBar.setBaseSpeed(10);
-
-            }
-        }, 5000);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                nSidedProgressBar.setProgress(i);
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
-
+        NSidedProgressBar nSidedProgressBar = findViewById(R.id.nsidedprogressbar);
     }
 }
