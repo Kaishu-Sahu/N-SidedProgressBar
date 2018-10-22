@@ -12,7 +12,16 @@ Progress Bar in the shape of regular polygon.
 ![3](/gifs/3.gif)
 ![2](/gifs/2.gif)
 
-
+## Download
+The library is available on jcenter. Just add the dependency to your ```build.gradle``` file.
+```
+repositories {
+    jcenter()
+}
+```
+```
+implementation 'com.kaishu.nspb:nsidedprogressbar:1.0.0'
+```
 ## Usage
 To create NSidedProgressBar in xml :- 
 ```xml
