@@ -13,7 +13,7 @@ ext {
     siteUrl = 'https://github.com/Kaishu-Sahu/N-SidedProgressBar'
     gitUrl = 'https://github.com/Kaishu-Sahu/N-SidedProgressBar.git'
 
-    libraryVersion = '0.0.1'
+    libraryVersion = '1.0.0'
 
     developerId = 'kaishu-sahu'
     developerName = 'Kaishu Sahu'
