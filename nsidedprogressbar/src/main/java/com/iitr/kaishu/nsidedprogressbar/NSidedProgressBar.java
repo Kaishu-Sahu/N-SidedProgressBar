@@ -425,7 +425,9 @@ public class NSidedProgressBar extends View {
         super.onVisibilityChanged(changedView, visibility);
 
         if (visibility == View.INVISIBLE) {
-            timer.cancel();
+            if (timer != null) {
+                timer.cancel();
+            }
         } else {
             timer = new Timer();
             timer.scheduleAtFixedRate(new TimerTask() {
