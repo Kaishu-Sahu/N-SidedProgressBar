@@ -20,7 +20,7 @@ repositories {
 }
 ```
 ```
-implementation 'com.kaishu.nspb:nsidedprogressbar:1.0.0'
+implementation 'com.kaishu.nspb:nsidedprogressbar:1.0.2'
 ```
 ## Usage
 To create NSidedProgressBar in xml :- 
